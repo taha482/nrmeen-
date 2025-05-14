@@ -1,5 +1,5 @@
 import streamlit as st
-from openai import OpenAI
+import openai
 import os
 import random
 
@@ -20,7 +20,7 @@ with st.sidebar:
     
     if api_key:
         st.session_state.api_key = api_key
-        client = OpenAI(api_key=api_key)
+        openai.api_key = api_key
     
     st.markdown("---")
     st.markdown("### About Nrmeen")
@@ -99,7 +99,7 @@ if user_input:
             
             # Call OpenAI API
             with st.spinner("Nrmeen is typing..."):
-                client = OpenAI(api_key=api_key)
+                openai.api_key = api_key
                 
                 # Analyze if user message might be annoying to Nrmeen
                 annoying_triggers = ["you're wrong", "you don't understand", "that's not right", "you're being", 
@@ -132,12 +132,14 @@ if user_input:
                         temp_messages[i]["content"] = modified_content
                         break
                 
-                response = client.chat.completions.create(
+                response = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
                     messages=temp_messages,
                     temperature=0.9,
                     max_tokens=300,
                 )
+                
+                reply = response.choices[0].message.content
                 
                 reply = response.choices[0].message.content
                 
